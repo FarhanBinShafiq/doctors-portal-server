@@ -44,17 +44,17 @@ async function run() {
     const doctorsCollection = client.db('doctors_portal').collection('doctors')
 
     // NOTE: make sure you use verifyAdmin after verifyJWT
-      const verifyAdmin = async (req, res, next) => {
-        console.log('inside verifyadmin',req.decoded.email)
-    const decodedEmail = req.decoded.email;
+    const verifyAdmin = async (req, res, next) => {
+      console.log('inside verifyadmin', req.decoded.email)
+      const decodedEmail = req.decoded.email;
       const query = { email: decodedEmail };
       const user = await usersCollection.findOne(query);
 
       if (user?.role !== 'admin') {
-          return res.status(403).send({ message: 'forbidden access' })
+        return res.status(403).send({ message: 'forbidden access' })
       }
       next();
-  }
+    }
 
 
     //get method
@@ -175,7 +175,7 @@ async function run() {
 
     //////MAKE ADMIN ROLE option update
 
-    app.put('/users/admin/:id', verifyJWT,verifyAdmin, async (req, res) => {
+    app.put('/users/admin/:id', verifyJWT, verifyAdmin, async (req, res) => {
 
       // const decodedEmail = req.decoded.email;
       // const query = { email: decodedEmail };
@@ -216,21 +216,21 @@ async function run() {
 
     //doctors collection
 
-    app.get('/doctors',async (req, res) => {
+    app.get('/doctors', async (req, res) => {
       const query = {}
       const result = await doctorsCollection.find(query).toArray();
       res.send(result);
     })
 
 
-    app.post('/doctors',verifyJWT,verifyAdmin, async (req, res) => {
+    app.post('/doctors', verifyJWT, verifyAdmin, async (req, res) => {
       const doctor = req.body;
       const result = await doctorsCollection.insertOne(doctor);
       res.send(result);
     })
 
 
-    app.delete('/doctors/:id',verifyJWT,verifyAdmin, async (req, res) => {
+    app.delete('/doctors/:id', verifyJWT, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) }
       const result = await doctorsCollection.deleteOne(filter)
